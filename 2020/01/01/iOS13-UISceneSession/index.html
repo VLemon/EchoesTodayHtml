@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://echoes.today').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","width":280,"display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="Xcode 11 建新工程默认会创建通过 UIScene 管理多个 UIWindow 的应用，工程中除了 AppDelegate 外还会有一个 SceneDelegate，这是为了实现iPadOS支持多窗口的结果。AppDelegate.h不再有window属性，window属性被定义在了SceneDelegate.h中，AppDelegate中有新增的关于scene的代理方法，SceneDele">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 13 UISceneSession">
+<meta property="og:url" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/index.html">
+<meta property="og:site_name" content="晴れゆく空 Echoes Today">
+<meta property="og:description" content="Xcode 11 建新工程默认会创建通过 UIScene 管理多个 UIWindow 的应用，工程中除了 AppDelegate 外还会有一个 SceneDelegate，这是为了实现iPadOS支持多窗口的结果。AppDelegate.h不再有window属性，window属性被定义在了SceneDelegate.h中，AppDelegate中有新增的关于scene的代理方法，SceneDele">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/scene1.jpg">
+<meta property="og:image" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/scene2.jpg">
+<meta property="og:image" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/scene3.jpg">
+<meta property="og:image" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/scene4.jpg">
+<meta property="article:published_time" content="2020-01-01T08:57:07.000Z">
+<meta property="article:modified_time" content="2020-05-20T10:40:34.810Z">
+<meta property="article:author" content="晴れゆく空">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://echoes.today/2020/01/01/iOS13-UISceneSession/scene1.jpg">
+
+<link rel="canonical" href="http://echoes.today/2020/01/01/iOS13-UISceneSession/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>iOS 13 UISceneSession | 晴れゆく空 Echoes Today</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">晴れゆく空 Echoes Today</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">晴れゆく空 记录今天的收获！😄</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-wiki">
+
+    <a href="http://wiki.echoes.today/" rel="noopener" target="_blank">wiki</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://echoes.today/2020/01/01/iOS13-UISceneSession/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴れゆく空">
+      <meta itemprop="description" content="晴れゆく空 记录今天的收获！😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晴れゆく空 Echoes Today">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS 13 UISceneSession
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-01 16:57:07" itemprop="dateCreated datePublished" datetime="2020-01-01T16:57:07+08:00">2020-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-20 18:40:34" itemprop="dateModified" datetime="2020-05-20T18:40:34+08:00">2020-05-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Xcode 11 建新工程默认会创建通过 UIScene 管理多个 UIWindow 的应用，工程中除了 AppDelegate 外还会有一个 SceneDelegate，这是为了实现iPadOS支持多窗口的结果。AppDelegate.h不再有window属性，window属性被定义在了SceneDelegate.h中，AppDelegate中有新增的关于scene的代理方法，SceneDelegate中也有相应的代理方法。因此，当我们用Xcode11针对不同版本的iOS开发应用时，就要做一些适配。</p>
+<p>创建好一个工程后，可以看到相关Xcode开发界面变成了下面这样：<br><img src="/2020/01/01/iOS13-UISceneSession/scene1.jpg" alt="Xcode"></p>
+<a id="more"></a>
+
+<p>工程配置general<br><img src="/2020/01/01/iOS13-UISceneSession/scene2.jpg" alt="工程配置general"></p>
+<p>info.plist文件<br>AppDelegate.h中多了两个默认的代理方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#pragma mark - UISceneSession lifecycle</span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line">1.如果没有在APP的Info.plist文件中包含scene的配置数据，或者要动态更改场景配置数据，需要实现此方法。 UIKit会在创建新scene前调用此方法。</span><br><span class="line">2.方法会返回一个UISceneConfiguration对象，其包含其中包含场景详细信息，包括要创建的场景类型，用于管理场景的委托对象以及包含要显示的初始视图控制器的情节提要。 如果未实现此方法，则必须在应用程序的Info.plist文件中提供场景配置数据。</span><br><span class="line"></span><br><span class="line">总结下：默认在info.plist中进行了配置， 不用实现该方法也没有关系。如果没有配置就需要实现这个方法并返回一个UISceneConfiguration对象。</span><br><span class="line">配置参数中Application Session Role 是个数组，每一项有三个参数:</span><br><span class="line">Configuration Name:   当前配置的名字;</span><br><span class="line">Delegate Class Name:  与哪个Scene代理对象关联;</span><br><span class="line">StoryBoard name: 这个Scene使用的哪个storyboard。</span><br><span class="line">注意：代理方法中调用的是配置名为Default Configuration的Scene，则系统就会自动去调用SceneDelegate这个类。这样SceneDelegate和AppDelegate产生了关联。</span><br><span class="line">*&#x2F;</span><br><span class="line">- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options &#123;</span><br><span class="line">    &#x2F;&#x2F; Called when a new scene session is being created.</span><br><span class="line">    &#x2F;&#x2F; Use this method to select a configuration to create the new scene with.</span><br><span class="line">    return [[UISceneConfiguration alloc] initWithName:@&quot;Default Configuration&quot; sessionRole:connectingSceneSession.role];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 在分屏中关闭其中一个或多个scene时候回调用</span><br><span class="line">- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet&lt;UISceneSession *&gt; *)sceneSessions &#123;</span><br><span class="line">    &#x2F;&#x2F; Called when the user discards a scene session.</span><br><span class="line">    &#x2F;&#x2F; If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.</span><br><span class="line">    &#x2F;&#x2F; Use this method to release any resources that were specific to the discarded scenes, as they will not return.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SceneDelegate.m中的默认代理方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions &#123;</span><br><span class="line">    &#x2F;&#x2F; Use this method to optionally configure and attach the UIWindow &#96;window&#96; to the provided UIWindowScene &#96;scene&#96;.</span><br><span class="line">    &#x2F;&#x2F; If using a storyboard, the &#96;window&#96; property will automatically be initialized and attached to the scene.</span><br><span class="line">    &#x2F;&#x2F; This delegate does not imply the connecting scene or session are new (see &#96;application:configurationForConnectingSceneSession&#96; instead).</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)sceneDidDisconnect:(UIScene *)scene &#123;</span><br><span class="line">    &#x2F;&#x2F; Called as the scene is being released by the system.</span><br><span class="line">    &#x2F;&#x2F; This occurs shortly after the scene enters the background, or when its session is discarded.</span><br><span class="line">    &#x2F;&#x2F; Release any resources associated with this scene that can be re-created the next time the scene connects.</span><br><span class="line">    &#x2F;&#x2F; The scene may re-connect later, as its session was not neccessarily discarded (see &#96;application:didDiscardSceneSessions&#96; instead).</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)sceneDidBecomeActive:(UIScene *)scene &#123;</span><br><span class="line">    &#x2F;&#x2F; Called when the scene has moved from an inactive state to an active state.</span><br><span class="line">    &#x2F;&#x2F; Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)sceneWillResignActive:(UIScene *)scene &#123;</span><br><span class="line">    &#x2F;&#x2F; Called when the scene will move from an active state to an inactive state.</span><br><span class="line">    &#x2F;&#x2F; This may occur due to temporary interruptions (ex. an incoming phone call).</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)sceneWillEnterForeground:(UIScene *)scene &#123;</span><br><span class="line">    &#x2F;&#x2F; Called as the scene transitions from the background to the foreground.</span><br><span class="line">    &#x2F;&#x2F; Use this method to undo the changes made on entering the background.</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)sceneDidEnterBackground:(UIScene *)scene &#123;</span><br><span class="line">    &#x2F;&#x2F; Called as the scene transitions from the foreground to the background.</span><br><span class="line">    &#x2F;&#x2F; Use this method to save data, release shared resources, and store enough scene-specific state information</span><br><span class="line">    &#x2F;&#x2F; to restore the scene back to its current state.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-不需要多窗口（multiple-windows）"><a href="#1-不需要多窗口（multiple-windows）" class="headerlink" title="1. 不需要多窗口（multiple windows）"></a>1. 不需要多窗口（multiple windows）</h3><p>如果需要支持iOS 13 及之前多个版本的iOS，且又不需要多个窗口的功能，可以删除项目info.plist文件中的Application Scene Manifest的配置数据，AppDelegate中关于Scene的代理方法、SceneDelegate的类是否删除都可以。<br>如果使用纯代码来实现显示界面，需要在AppDelegate.h中手动添加window属性，添加以下代码即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions &#123;</span><br><span class="line">  </span><br><span class="line">    self.window &#x3D; [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];</span><br><span class="line">    [self.window setBackgroundColor:[UIColor whiteColor]];</span><br><span class="line">    </span><br><span class="line">    ViewController *con &#x3D; [[ViewController alloc] init];</span><br><span class="line">    UINavigationController *nav &#x3D; [[UINavigationController alloc] initWithRootViewController:con];</span><br><span class="line">    [self.window setRootViewController:nav];</span><br><span class="line">    [self.window makeKeyAndVisible];</span><br><span class="line">    return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-支持多窗口"><a href="#2-支持多窗口" class="headerlink" title="2. 支持多窗口"></a>2. 支持多窗口</h3><p>iOS 13项目info.plist中的配置项Application Scene Manifest是针对iPad multiple windows功能推出的。在保留Application Scene Manifest配置项不予删除时（其中，项目是否支持多窗口功能是个可勾选项），AppDelegate的生命周期方法不再起作用，需要在SceneDelegate中使用UIScene提供的生命周期方法，并且需要针对 iOS 13 需要在Scene中配置和 iOS 13 以下在AppDelegate中做两套配置。<br>下面是纯代码实现界面显示的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;&#x2F; AppDelegate.m中</span><br><span class="line"></span><br><span class="line">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions &#123;</span><br><span class="line">    &#x2F;&#x2F; Override point for customization after application launch.</span><br><span class="line">    </span><br><span class="line">    if (@available(iOS 13.0, *)) &#123;</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        self.window &#x3D; [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];</span><br><span class="line">        [self.window setBackgroundColor:[UIColor whiteColor]];</span><br><span class="line">        </span><br><span class="line">        ViewController *con &#x3D; [[ViewController alloc] init];</span><br><span class="line">        UINavigationController *nav &#x3D; [[UINavigationController alloc] initWithRootViewController:con];</span><br><span class="line">        [self.window setRootViewController:nav];</span><br><span class="line">        [self.window makeKeyAndVisible];</span><br><span class="line">    &#125;</span><br><span class="line">    return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;&#x2F; SceneDelegate.m中</span><br><span class="line"></span><br><span class="line">- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions &#123;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;在这里手动创建新的window</span><br><span class="line">    if (@available(iOS 13.0, *)) &#123;</span><br><span class="line">        UIWindowScene *windowScene &#x3D; (UIWindowScene *)scene;</span><br><span class="line">        self.window &#x3D; [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];</span><br><span class="line">        [self.window setWindowScene:windowScene];</span><br><span class="line">        [self.window setBackgroundColor:[UIColor whiteColor]];</span><br><span class="line">        </span><br><span class="line">        ViewController *con &#x3D; [[ViewController alloc] init];</span><br><span class="line">        UINavigationController *nav &#x3D; [[UINavigationController alloc] initWithRootViewController:con];</span><br><span class="line">        [self.window setRootViewController:nav];</span><br><span class="line">        [self.window makeKeyAndVisible];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：如果不使用storyboard，需要将配置中的storyboard项删除：</p>
+<p><img src="/2020/01/01/iOS13-UISceneSession/scene3.jpg" alt="secen"></p>
+<p>general</p>
+<p><img src="/2020/01/01/iOS13-UISceneSession/scene4.jpg" alt="secen"></p>
+<p>info.plist</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/" rel="next" title="了解Mach-O文件">
+      了解Mach-O文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-不需要多窗口（multiple-windows）"><span class="nav-number">1.</span> <span class="nav-text">1. 不需要多窗口（multiple windows）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-支持多窗口"><span class="nav-number">2.</span> <span class="nav-text">2. 支持多窗口</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">晴れゆく空</p>
+  <div class="site-description" itemprop="description">晴れゆく空 记录今天的收获！😄</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">晴れゆく空</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.7.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

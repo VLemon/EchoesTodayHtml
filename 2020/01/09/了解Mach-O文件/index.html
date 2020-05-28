@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://echoes.today').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","width":280,"display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="在Windows下我们的可执行文件一般是.exe文件，iOS以及macOS系统中是我们常说的Mach-O文件，常见的文件有我们的可执行文件，动态库，以及动态链接库等。 了解Mach-OMach-O,是Mach Object的文件格式的缩写，是一种用于记录可执行文件，对象代码，共享库，动态加载代码和内存转储的文件格式，是macOS&#x2F;iOS上程序以及库的标准格式。 Mach-O文件可以通过MachOV">
+<meta property="og:type" content="article">
+<meta property="og:title" content="了解Mach-O文件">
+<meta property="og:url" content="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="晴れゆく空 Echoes Today">
+<meta property="og:description" content="在Windows下我们的可执行文件一般是.exe文件，iOS以及macOS系统中是我们常说的Mach-O文件，常见的文件有我们的可执行文件，动态库，以及动态链接库等。 了解Mach-OMach-O,是Mach Object的文件格式的缩写，是一种用于记录可执行文件，对象代码，共享库，动态加载代码和内存转储的文件格式，是macOS&#x2F;iOS上程序以及库的标准格式。 Mach-O文件可以通过MachOV">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o.png">
+<meta property="og:image" content="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o_header.png">
+<meta property="og:image" content="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o_load_commands.png">
+<meta property="article:published_time" content="2020-01-09T03:13:21.000Z">
+<meta property="article:modified_time" content="2020-05-20T10:40:34.814Z">
+<meta property="article:author" content="晴れゆく空">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o.png">
+
+<link rel="canonical" href="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>了解Mach-O文件 | 晴れゆく空 Echoes Today</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">晴れゆく空 Echoes Today</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">晴れゆく空 记录今天的收获！😄</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-wiki">
+
+    <a href="http://wiki.echoes.today/" rel="noopener" target="_blank">wiki</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://echoes.today/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴れゆく空">
+      <meta itemprop="description" content="晴れゆく空 记录今天的收获！😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晴れゆく空 Echoes Today">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          了解Mach-O文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-09 11:13:21" itemprop="dateCreated datePublished" datetime="2020-01-09T11:13:21+08:00">2020-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-20 18:40:34" itemprop="dateModified" datetime="2020-05-20T18:40:34+08:00">2020-05-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在Windows下我们的可执行文件一般是.exe文件，iOS以及macOS系统中是我们常说的Mach-O文件，常见的文件有我们的可执行文件，动态库，以及动态链接库等。</p>
+<h2 id="了解Mach-O"><a href="#了解Mach-O" class="headerlink" title="了解Mach-O"></a>了解Mach-O</h2><p>Mach-O,是Mach Object的文件格式的缩写，是一种用于记录可执行文件，对象代码，共享库，动态加载代码和内存转储的文件格式，是macOS/iOS上程序以及库的标准格式。 Mach-O文件可以通过MachOView打开查看。</p>
+<h3 id="Mach-O-常见应用"><a href="#Mach-O-常见应用" class="headerlink" title="Mach-O 常见应用"></a>Mach-O 常见应用</h3><p>Mach-O，在苹果头文件中定义的类型有11种, 常用的有<code>MH_OBJECT</code>，<code>MH_EXECUTE</code>，<code>MH_DYLIB</code>，<code>MH_DYLINKER</code>，以及我们常见的DSYM文件都是Mach-O文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_OBJECT   0x1     <span class="comment">/* 目标文件*/</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_EXECUTE  0x2     <span class="comment">/* 可执行文件 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_FVMLIB   0x3     <span class="comment">/* fixed VM shared library file */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_CORE     0x4     <span class="comment">/*核心转储文件 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_PRELOAD  0x5     <span class="comment">/* preloaded executable file */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_DYLIB    0x6     <span class="comment">/* 动态库 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_DYLINKER 0x7     <span class="comment">/* 动态链接器 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_BUNDLE   0x8     <span class="comment">/* dynamically bound bundle file */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_DYLIB_STUB   0x9     <span class="comment">/* shared library stub for static */</span></span></span><br><span class="line">                    <span class="comment">/*  linking only, no section contents */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_DSYM     0xa     <span class="comment">/* companion file with only debug */</span></span></span><br><span class="line">                    <span class="comment">/*  sections */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MH_KEXT_BUNDLE  0xb     <span class="comment">/* x86_64 kexts */</span></span></span><br></pre></td></tr></table></figure>
+<p><a href="https://opensource.apple.com/tarballs/xnu/" target="_blank" rel="noopener">源码</a></p>
+<a id="more"></a>
+
+<h3 id="Mach-O文件结构"><a href="#Mach-O文件结构" class="headerlink" title="Mach-O文件结构"></a>Mach-O文件结构</h3><p>Mach-O文件主要包含三个区域</p>
+<ul>
+<li>Header ： 记录文件类型，目标CPU架构，Magic Number等。</li>
+<li>Load Command ：记录描述文件在虚拟内存中的逻辑与布局</li>
+<li>Raw Segment Data ： 原始数据</li>
+</ul>
+<p>结构图<br><img src="/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o.png" alt="结构图"></p>
+<h4 id="Mach-O-Header"><a href="#Mach-O-Header" class="headerlink" title="Mach-O Header"></a>Mach-O Header</h4><p>下面👇是Mach-O 文件header的定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mach_header_64</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    magic;        <span class="comment">/* mach magic number identifier 魔数*/</span></span><br><span class="line">    <span class="keyword">cpu_type_t</span>    cputype;    <span class="comment">/* cpu specifier 支持的CPU架构类型*/</span></span><br><span class="line">    <span class="keyword">cpu_subtype_t</span>    cpusubtype;    <span class="comment">/* machine specifier */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    filetype;    <span class="comment">/* type of file  文件类型*/</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    ncmds;        <span class="comment">/* number of load commands */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    sizeofcmds;    <span class="comment">/* the size of all the load commands */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    flags;        <span class="comment">/* flags */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>    reserved;    <span class="comment">/* reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>magic</code>: 魔数，用来标识Mach-O平台的属性，确认文件的类型，操作系统在加载时会进行校验，如果校验不过会拒绝加载。<br><code>cputype</code>: 支持的CPU类型 比如 Arm<br><code>cpu_subtype_t</code> : 具体支持的CPU类型<br><code>filetype</code> : 文件类型<br><code>ncmds</code> : 加载命令条数<br><code>sizeofcmds</code> : 加载命令的大小</p>
+<p>具体可以看图:</p>
+<p><img src="/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o_header.png" alt="Mach-O Header"></p>
+<h4 id="Mach-O-Load-Commands"><a href="#Mach-O-Load-Commands" class="headerlink" title="Mach-O Load Commands"></a>Mach-O Load Commands</h4><p>Mach-O Header之后就是Load commands,也就是加载命令。加载命令的作用是在Mach-O文件被加载到内存时，加载命令告诉内核加载器或者动态链接器如何调用。还是先试用MachOview看一下Mach-O文件中的加载命令：</p>
+<p><img src="/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/mach-o_load_commands.png" alt="Mach-O Load Commands"></p>
+<p>命令结构定义如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">load_command</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> cmd;        <span class="comment">/* type of load command */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> cmdsize;    <span class="comment">/* total size of command in bytes */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>cmdsize</code> ：具体的load_command结构所占内存的大小。<br><code>cmd</code> : 具体的加载类型，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#define LC_SEGMENT  0x1 &#x2F;* segment of this file to be mapped *&#x2F;</span><br><span class="line">#define LC_THREAD   0x4 &#x2F;* thread *&#x2F;</span><br><span class="line">#define LC_UNIXTHREAD   0x5 &#x2F;* unix thread (includes a stack) *&#x2F;</span><br><span class="line">#define LC_PREPAGE      0xa     &#x2F;* prepage command (internal use) *&#x2F;</span><br><span class="line">#define LC_DYSYMTAB 0xb &#x2F;* dynamic link-edit symbol table info *&#x2F;</span><br><span class="line">#define LC_LOAD_DYLIB   0xc &#x2F;* load a dynamically linked shared library *&#x2F;</span><br><span class="line">#define LC_CODE_SIGNATURE 0x1d   &#x2F;* local of code signature *&#x2F;</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+<p>LC_SEGMENT是一个段加载命令；LC_LOAD_DYLIB表示这事一个需要动态加载的链接库；LC_CODE_SIGNATURE和签名、加密有关。<br>上图中看到加载命令是LC_SEGMENT_64，表示的是将64位的段映射到进程的地址空间。可以看一下段加载命令的数据结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">struct segment_command_64 &#123; &#x2F;* for 64-bit architectures *&#x2F;</span><br><span class="line">    uint32_t    cmd;        &#x2F;* LC_SEGMENT_64 *&#x2F;</span><br><span class="line">    uint32_t    cmdsize;    &#x2F;* includes sizeof section_64 structs *&#x2F;</span><br><span class="line">    char        segname[16];    &#x2F;* segment name *&#x2F;</span><br><span class="line">    uint64_t    vmaddr;     &#x2F;* memory address of this segment *&#x2F;</span><br><span class="line">    uint64_t    vmsize;     &#x2F;* memory size of this segment *&#x2F;</span><br><span class="line">    uint64_t    fileoff;    &#x2F;* file offset of this segment *&#x2F;</span><br><span class="line">    uint64_t    filesize;   &#x2F;* amount to map from the file *&#x2F;</span><br><span class="line">    vm_prot_t   maxprot;    &#x2F;* maximum VM protection *&#x2F;</span><br><span class="line">    vm_prot_t   initprot;   &#x2F;* initial VM protection *&#x2F;</span><br><span class="line">    uint32_t    nsects;     &#x2F;* number of sections in segment *&#x2F;</span><br><span class="line">    uint32_t    flags;      &#x2F;* flags *&#x2F;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>sectname字段表示该section的name。<br>segname字段表示该section所属的segment的segmentName。<br>addr字段表示该section的内存起始地址。<br>size字段表示该section的大小。<br>offset字段表示该section相对文件的偏移量。<br>align字段表示字节区的内存对齐边界。<br>reloff表示重定位信息的文件偏移。<br>nreloc表示重定位条目的数目。<br>flags是section的一些标志属性。</p>
+<h4 id="Mach-O-Data"><a href="#Mach-O-Data" class="headerlink" title="Mach-O Data"></a>Mach-O Data</h4><p>Mach-O中Load Commands之后的就是Data数据。每个段的数据都保存在这里，这里存放了具体的数据与代码。由于Mach-O Data中的内容更多的与具体的数据有关，而与格式无关。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/01/iOS13-UISceneSession/" rel="prev" title="iOS 13 UISceneSession">
+      <i class="fa fa-chevron-left"></i> iOS 13 UISceneSession
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/20/Hello-Hexo/" rel="next" title="Hello Hexo">
+      Hello Hexo <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#了解Mach-O"><span class="nav-number">1.</span> <span class="nav-text">了解Mach-O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mach-O-常见应用"><span class="nav-number">1.1.</span> <span class="nav-text">Mach-O 常见应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mach-O文件结构"><span class="nav-number">1.2.</span> <span class="nav-text">Mach-O文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mach-O-Header"><span class="nav-number">1.2.1.</span> <span class="nav-text">Mach-O Header</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mach-O-Load-Commands"><span class="nav-number">1.2.2.</span> <span class="nav-text">Mach-O Load Commands</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mach-O-Data"><span class="nav-number">1.2.3.</span> <span class="nav-text">Mach-O Data</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">晴れゆく空</p>
+  <div class="site-description" itemprop="description">晴れゆく空 记录今天的收获！😄</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">晴れゆく空</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.7.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

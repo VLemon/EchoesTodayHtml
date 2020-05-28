@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://echoes.today').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","width":280,"display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="可选值Optional0x1 哨岗值在编程中有一种非常通用的模式，那就是某个操作是否要返回一个有效值。当一个函数并没有返回真实的有效值，而是通过一个“魔法”数来表示其没有真正的返回值，这样的值被称为哨岗值 sentinel value。  哨岗值存在的一些问题： 有效性问题 比如 1234NSString *someString &#x3D; ...;if ([someString rangeOf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift学习笔记--可选值Optional">
+<meta property="og:url" content="http://echoes.today/2020/05/28/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%AF%E9%80%89%E5%80%BCOptional/index.html">
+<meta property="og:site_name" content="晴れゆく空 Echoes Today">
+<meta property="og:description" content="可选值Optional0x1 哨岗值在编程中有一种非常通用的模式，那就是某个操作是否要返回一个有效值。当一个函数并没有返回真实的有效值，而是通过一个“魔法”数来表示其没有真正的返回值，这样的值被称为哨岗值 sentinel value。  哨岗值存在的一些问题： 有效性问题 比如 1234NSString *someString &#x3D; ...;if ([someString rangeOf">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-28T03:59:39.000Z">
+<meta property="article:modified_time" content="2020-05-28T04:02:06.608Z">
+<meta property="article:author" content="晴れゆく空">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://echoes.today/2020/05/28/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%AF%E9%80%89%E5%80%BCOptional/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Swift学习笔记--可选值Optional | 晴れゆく空 Echoes Today</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">晴れゆく空 Echoes Today</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">晴れゆく空 记录今天的收获！😄</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-wiki">
+
+    <a href="http://wiki.echoes.today/" rel="noopener" target="_blank">wiki</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://echoes.today/2020/05/28/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%AF%E9%80%89%E5%80%BCOptional/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴れゆく空">
+      <meta itemprop="description" content="晴れゆく空 记录今天的收获！😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晴れゆく空 Echoes Today">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift学习笔记--可选值Optional
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-28 11:59:39 / 修改时间：12:02:06" itemprop="dateCreated datePublished" datetime="2020-05-28T11:59:39+08:00">2020-05-28</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="可选值Optional"><a href="#可选值Optional" class="headerlink" title="可选值Optional"></a>可选值Optional</h1><h2 id="0x1-哨岗值"><a href="#0x1-哨岗值" class="headerlink" title="0x1 哨岗值"></a>0x1 哨岗值</h2><p>在编程中有一种非常通用的模式，那就是某个操作是否要返回一个有效值。当一个函数并没有返回真实的有效值，而是通过一个“魔法”数来表示其没有真正的返回值，这样的值被称为<strong>哨岗值 sentinel value</strong>。</p>
+<blockquote>
+<p>哨岗值存在的一些问题：</p>
+<p>有效性问题</p>
+<p>比如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NSString *someString &#x3D; ...;</span><br><span class="line">if ([someString rangeOfString:@&quot;Swift&quot;].location !&#x3D; NSNotFound) &#123;</span><br><span class="line">	NSLog(@&quot;Someone mentioned Swift!&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果 someString 是 nil，那么 rangeOfString: 消息将返回一个值都为零的 NSRange。也就是说，.location 将为零，而 NSNotFound 被定义为 NSIntegerMax。这样一来，当 someString 是 nil 时，if 语句的内容将被执行，而其实这并不应该发生。</p>
+<p>需要一些前置知识。需要对API进行了解。</p>
+</blockquote>
+<p>“Tony Hoare 在 1965 年设计了 null 引用，他对此设计表示痛心疾首，并将这个问题称为“价值十亿美元的错误”：</p>
+<p>那时候，我正在为一门面向对象语言 (ALGOL W) 设计第一个全面的引用类型系统。我的目标是在编译器自动执行的检查的保证下，确保对于引用的所有使用都是安全的。但是我没能抵挡住引入 null 引用的诱惑，因为它太容易实现了。这导致了不计其数的错误，漏洞以及系统崩溃。这个问题可能在过去四十年里造成了有十亿美元的损失。”</p>
+<p>摘录来自: Chris Eidhof. “Swift 进阶。” Apple Books. </p>
+<a id="more"></a>
+
+<h2 id="0x2-关键字Optional"><a href="#0x2-关键字Optional" class="headerlink" title="0x2 关键字Optional"></a>0x2 关键字Optional</h2><p>在Swift中引入Optional(可选值)关键字来处理哨岗值所带来的问题，Optional的是一个枚举实现具体定义为：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Optional</span>&lt;<span class="title">Wrapped</span>&gt; </span>&#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="keyword">none</span></span><br><span class="line">	<span class="keyword">case</span> some(<span class="type">Wrapped</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>举例：Swift 中与 find 等效的方法 firstIndex(of:) 返回的不是一个哨岗值，而是一个 Optional<Index>。以下是一个类似的实现：</Index></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Collection</span> <span class="title">where</span> <span class="title">Element</span>: <span class="title">Equatable</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">func</span> <span class="title">firstIndex</span><span class="params">(of element: Element)</span></span> -&gt; <span class="type">Optional</span>&lt;<span class="type">Index</span>&gt; 	&#123;</span><br><span class="line">			<span class="keyword">var</span> idx = startIndex</span><br><span class="line">			<span class="keyword">while</span> idx != endIndex &#123;</span><br><span class="line">					<span class="keyword">if</span> <span class="keyword">self</span>[idx] == element &#123;	</span><br><span class="line">						<span class="keyword">return</span> .some(idx)</span><br><span class="line">					&#125;</span><br><span class="line">					formIndex(after: &amp;idx)</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="comment">// 没有找到，返回 .none</span></span><br><span class="line">		<span class="keyword">return</span> .<span class="keyword">none</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为可选值是 Swift 中非常重要和基础的类型，所以有很多让它用起来更简洁的语法：Optional<Index> 可以写成 Index?；可选值遵守 ExpressibleByNilLiteral 协议，因此可以用 nil 替代 .none；像上面 idx 这样的非可选值将在需要的时候自动“升级”为可选值，这样就可以直接写 return idx，而不用 return .some(idx) 了。</Index></p>
+<blockquote>
+<p>“这个语法糖实际上掩盖了 Optional 类型的真正本质。请时刻牢记，可选值并不是什么魔法，它就是一个普通的枚举值。即便 Swift 没有提供它，你也完全可以自己定义一个。”</p>
+<p>摘录来自: Chris Eidhof. “Swift 进阶。” Apple Books. </p>
+</blockquote>
+<p>有了Optional，我们就不会在没有检查的情况下，错误的使用一个值了</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> array = [<span class="string">"one"</span>, <span class="string">"two"</span>, <span class="string">"three"</span>]</span><br><span class="line"><span class="keyword">let</span> idx = array.firstIndex(of: <span class="string">"four"</span>)</span><br><span class="line"><span class="comment">// 编译错误：remove(at:) 接受 Int，而不是 Optional&lt;Int&gt;。</span></span><br><span class="line">array.remove(at: idx)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="if-let"><a href="#if-let" class="headerlink" title="if let"></a>if let</h3><p>我们可以通过if let的方式进行可选值绑定（Optional binding），if let语句会检查可选值是否为nil，如果不是nil，便会解包可选值。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> array = [<span class="string">"one"</span>, <span class="string">"two"</span>, <span class="string">"three"</span>, <span class="string">"four"</span>]</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> idx = array.firstIndex(of: <span class="string">"four"</span>) &#123;</span><br><span class="line">	array.remove(at: idx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们还可以把布尔限定语句与if let 搭配一起使用，同一个if语句中可以绑定多个值。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> urlString = <span class="string">"https://www.objc.io/logo.png"</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> url = <span class="type">URL</span>(string: urlString),</span><br><span class="line"><span class="keyword">let</span> data = <span class="keyword">try</span>? <span class="type">Data</span>(contentsOf: url),</span><br><span class="line"><span class="keyword">let</span> image = <span class="type">UIImage</span>(data: data)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">let</span> view = <span class="type">UIImageView</span>(image: image)</span><br><span class="line">	<span class="type">PlaygroundPage</span>.current.liveView = view</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="while-let"><a href="#while-let" class="headerlink" title="while let"></a>while let</h3><p>while let 语句和 if let 非常相似，它表示当一个条件返回 nil 时便终止循环。</p>
+<p>标准库中的 readLine 函数从标准输入中读取内容，并返回一个可选字符串。当到达输入末尾时，这个函数将返回 nil。所以，你可以使用 while let 来实现一个非常基础的和 Unix 中 cat 命令等价的功能：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="keyword">let</span> line = <span class="built_in">readLine</span>() &#123;</span><br><span class="line">	<span class="built_in">print</span>(line)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="双重可选值"><a href="#双重可选值" class="headerlink" title="双重可选值"></a>双重可选值</h3><p>双重可选值就是一个可选值的包装类型也是一个可选值的情况，这会导致可选值的嵌套。举个例子</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> stringNumbers = [<span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"three"</span>]</span><br><span class="line"><span class="keyword">let</span> maybeInts = stringNumbers.<span class="built_in">map</span> &#123; <span class="type">Int</span>($<span class="number">0</span>) &#125; </span><br><span class="line"><span class="comment">// [Optional(1), Optional(2), nil]</span></span><br></pre></td></tr></table></figure>
+
+<p>maybeInts是一个Int?类型的数组，当我们使用for遍历maybeInts的时候，访问到的每个元素都是 Int?类型</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> maybeInt <span class="keyword">in</span> maybeInts &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">let</span> a = maybeInt &#123;</span><br><span class="line">		<span class="comment">//对a进行解包</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">case</span> <span class="keyword">let</span> i? <span class="keyword">in</span> maybeInts &#123;</span><br><span class="line">  <span class="comment">// i 为非空值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="解包后可选值的作用域"><a href="#解包后可选值的作用域" class="headerlink" title="解包后可选值的作用域"></a>解包后可选值的作用域</h3><p>我们通过if let ，while let 等方式解包后我们的变量的作用域只有代码块的部分，当if语句的目的是在某些条件不满足的情况下提前退出函数的话，这个特性就不太实用了。</p>
+<p>我们可以先将条件不满足的情况下过滤掉，但是这种情况if let就不能帮我们实现期望的愿望了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doStuff</span> <span class="params">(withArray a:[int])</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a.isEmpty &#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//现在a[0]或者a.first!可以直接使用了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="关键字guard"><a href="#关键字guard" class="headerlink" title="关键字guard"></a>关键字guard</h4><p>我们可以使用guard let 来实现 if not let的逻辑</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doStuff</span> <span class="params">(withArray a:[int])</span></span> &#123;</span><br><span class="line">	<span class="keyword">guard</span> <span class="keyword">let</span> value = a.first <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">	<span class="comment">//现在可以放心的使用 解包后的value了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在guard的else 代码块中可以执行任意的代码，但是他唯一的要求是必须离开当前的作用域。</p>
+<p>关于方法的空返回值</p>
+<p>一个返回 Never 的函数用于通知编译器：它绝对不会返回。有两类常见的函数会这么做：一种是像 fatalError 那样表示程序失败的函数，另一种是像 dispatchMain 那样运行在整个程序生命周期的函数。编译器会使用这个信息来检查和确保控制流正确。举例来说，guard 语句的 else 路径必须退出当前域或者调用一个不会返回的函数。</p>
+<p>Never 又被叫做无人类型 (uninhabited type)。这种类型没有有效值，因此也不能够被构建。在泛型环境里，把 Never 和 Result 结合在一起是非常有用的。例如，对于一个接受 Result&lt;A, E&gt; (A 和 E 都是泛型参数) 的泛型 API，你可以传入一个 Result&lt;…, Never&gt; 表示这个结果中永远都不会包含失败的情况，因为这种情况是构建不出来的。另外，一个声明为返回无人类型的函数也绝对不可能正常返回.</p>
+<p>在 Swift 中，无人类型是通过一个不包含任意成员的 enum 实现的：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">Never</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般来说，你不会自己定义返回 Never 的方法，除非你在为 fatalError 或者 preconditionFailure 写封装。一个很有意思的应用场景是，当你要创建一个很复杂的 switch 语句，在逐条编写每个 case 的过程中，编译器就会用空的 case 语句或者是没有返回值这样的错误一直轰炸你，而你又想先集中精力处理某一个 case 语句的逻辑。这时，放几个 fatalError() 就能让编译器闭嘴。你还可以写一个 unimplemented() 方法，这样能够更好地表达这些调用是暂时没有实现的意思：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">unimplemented</span><span class="params">()</span></span> -&gt; <span class="type">Never</span> &#123;</span><br><span class="line">	<span class="built_in">fatalError</span>(<span class="string">"This code path is not implemented yet."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Swift 在区分各种”无“类型上非常严密。除了 nil 和 Never，还有 Void，Void 是空元组 (tuple) 的另一种写法：</p>
+<p>public typealias Void = ()<br>Void 或者 () 最常见的用法是作为那些不返回任何东西的函数的返回值，不过它也还有其他使用场景。举例来说，在一个响应式编程的框架中，使用 Observable<T> 类型对事件流进行建模，这里 T 表示发送事件中携带的内容类型。比如文本框会提供一个 Observable<String>，在每次用户编辑文本时发送事件。类似地，按钮对象也会在用户每次点击按钮时发送事件，不过这个事件没有附加的内容，所以它的事件流类型将会是 Observable&lt;()&gt;。</String></T></p>
+<p>Swift 对“东西不存在”(nil)，“存在且为空”(Void) 以及 “不可能发生” (Never) 这几个概念进行了仔细的区分。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/29/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0%E7%BB%84%EF%BC%8C%E5%AD%97%E5%85%B8%EF%BC%8CSet/" rel="prev" title="Swift学习笔记--数组，字典，Set">
+      <i class="fa fa-chevron-left"></i> Swift学习笔记--数组，字典，Set
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#可选值Optional"><span class="nav-number">1.</span> <span class="nav-text">可选值Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-哨岗值"><span class="nav-number">1.1.</span> <span class="nav-text">0x1 哨岗值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-关键字Optional"><span class="nav-number">1.2.</span> <span class="nav-text">0x2 关键字Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#if-let"><span class="nav-number">1.2.1.</span> <span class="nav-text">if let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#while-let"><span class="nav-number">1.2.2.</span> <span class="nav-text">while let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双重可选值"><span class="nav-number">1.2.3.</span> <span class="nav-text">双重可选值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解包后可选值的作用域"><span class="nav-number">1.2.4.</span> <span class="nav-text">解包后可选值的作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关键字guard"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">关键字guard</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">晴れゆく空</p>
+  <div class="site-description" itemprop="description">晴れゆく空 记录今天的收获！😄</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">晴れゆく空</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.7.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

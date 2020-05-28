@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://echoes.today').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","width":280,"display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="之前也用过Hexo搭建过博客，直接生成静态HTML的方式可以上传到Github，然后利用Github Pages的功能，只需要花个域名的钱就能有个自己的博客，还是挺划算的。但是Github国内实在不稳定，最近看了一下阿里云轻服务（香港🇭🇰）一个月才不到30的价格，就入手了一个，速度感觉还是挺快的，顺便搭建了一个ShowDoc。 0x0 搭建Nginx 以及 ShowDoc安装Nginx系统选用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hello Hexo">
+<meta property="og:url" content="http://echoes.today/2020/01/20/Hello-Hexo/index.html">
+<meta property="og:site_name" content="晴れゆく空 Echoes Today">
+<meta property="og:description" content="之前也用过Hexo搭建过博客，直接生成静态HTML的方式可以上传到Github，然后利用Github Pages的功能，只需要花个域名的钱就能有个自己的博客，还是挺划算的。但是Github国内实在不稳定，最近看了一下阿里云轻服务（香港🇭🇰）一个月才不到30的价格，就入手了一个，速度感觉还是挺快的，顺便搭建了一个ShowDoc。 0x0 搭建Nginx 以及 ShowDoc安装Nginx系统选用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://echoes.today/2020/01/20/Hello-Hexo/webhook.png">
+<meta property="article:published_time" content="2020-01-20T08:37:15.000Z">
+<meta property="article:modified_time" content="2020-05-20T10:40:34.810Z">
+<meta property="article:author" content="晴れゆく空">
+<meta property="article:tag" content="博客搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://echoes.today/2020/01/20/Hello-Hexo/webhook.png">
+
+<link rel="canonical" href="http://echoes.today/2020/01/20/Hello-Hexo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Hello Hexo | 晴れゆく空 Echoes Today</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">晴れゆく空 Echoes Today</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">晴れゆく空 记录今天的收获！😄</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-wiki">
+
+    <a href="http://wiki.echoes.today/" rel="noopener" target="_blank">wiki</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://echoes.today/2020/01/20/Hello-Hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴れゆく空">
+      <meta itemprop="description" content="晴れゆく空 记录今天的收获！😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晴れゆく空 Echoes Today">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hello Hexo
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-20 16:37:15" itemprop="dateCreated datePublished" datetime="2020-01-20T16:37:15+08:00">2020-01-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-20 18:40:34" itemprop="dateModified" datetime="2020-05-20T18:40:34+08:00">2020-05-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前也用过Hexo搭建过博客，直接生成静态HTML的方式可以上传到Github，然后利用Github Pages的功能，只需要花个域名的钱就能有个自己的博客，还是挺划算的。但是Github国内实在不稳定，最近看了一下阿里云轻服务（香港🇭🇰）一个月才不到30的价格，就入手了一个，速度感觉还是挺快的，顺便搭建了一个ShowDoc。</p>
+<h2 id="0x0-搭建Nginx-以及-ShowDoc"><a href="#0x0-搭建Nginx-以及-ShowDoc" class="headerlink" title="0x0 搭建Nginx 以及 ShowDoc"></a>0x0 搭建Nginx 以及 ShowDoc</h2><h3 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h3><p>系统选用的是CentOS，安装Nginx还是很简单,运行下面👇的命令即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="搭建ShowDoc"><a href="#搭建ShowDoc" class="headerlink" title="搭建ShowDoc"></a>搭建ShowDoc</h3><p><a href="https://www.showdoc.cc/" target="_blank" rel="noopener">ShowDoc</a> 是一个类似于轻量级Wiki的工具，可以自己建立多个项目，我主要是用它来记录一些杂事，以及一些可以分享给小伙伴的东西。具体可以看一下链接。安装方式采用的docker，命令👇</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#下载脚本并赋予权限</span><br><span class="line"> wget https:&#x2F;&#x2F;www.showdoc.cc&#x2F;script&#x2F;showdoc;chmod +x showdoc;</span><br><span class="line">#默认安装中文版。如果想安装英文版，请加上en参数，如 .&#x2F;showdoc en</span><br><span class="line">.&#x2F;showdoc</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，ShowDoc的docker的端口为4999，我们可以通过nginx将ShowDoc的域名解析到4999接口，修改nginx.conf，nginx配置如下</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  wiki.echoes.today;</span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_pass http:&#x2F;&#x2F;127.0.0.1:4999;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此ShowDoc搭建完成</p>
+<h2 id="0x1-Hexo-以及自动化部署"><a href="#0x1-Hexo-以及自动化部署" class="headerlink" title="0x1 Hexo 以及自动化部署"></a>0x1 Hexo 以及自动化部署</h2><p>Hexo 对于服务器来说只是需要nginx配置一个server就好了，主要说一下自动化部署实现思路，Hexo可以通过<code>hexo deploy</code>命令将生成的静态资源上传到Github，那么我们可以在项目中配置一个WebHook，在服务器中写一个脚本来响应。</p>
+<h3 id="webhook-脚本"><a href="#webhook-脚本" class="headerlink" title="webhook 脚本"></a>webhook 脚本</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line">  , exec = <span class="built_in">require</span>(<span class="string">'exec'</span>)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> PORT = <span class="number">9988</span></span><br><span class="line">  , PATH = <span class="string">'PATH'</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">var</span> deployServer = http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">request, response</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(request.url)</span><br><span class="line">  <span class="keyword">if</span> (request.url.search(<span class="regexp">/deploy\/?$/i</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> commands = [</span><br><span class="line">      <span class="string">'cd '</span> + PATH,</span><br><span class="line">      <span class="string">'git pull'</span></span><br><span class="line">    ].join(<span class="string">' &amp;&amp; '</span>)</span><br><span class="line"> </span><br><span class="line">    exec(commands, <span class="function"><span class="keyword">function</span>(<span class="params">err, out, code</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (err <span class="keyword">instanceof</span> <span class="built_in">Error</span>) &#123;</span><br><span class="line">        response.writeHead(<span class="number">500</span>)</span><br><span class="line">        response.end(<span class="string">'Server Internal Error.'</span>)</span><br><span class="line">        <span class="keyword">throw</span> err</span><br><span class="line">      &#125;</span><br><span class="line">      process.stderr.write(err)</span><br><span class="line">      process.stdout.write(out)</span><br><span class="line">      response.writeHead(<span class="number">200</span>)</span><br><span class="line">      response.end(<span class="string">'Deploy Done.'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"> </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    response.writeHead(<span class="number">404</span>)</span><br><span class="line">    response.end(<span class="string">'Not Found.'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"> </span><br><span class="line">deployServer.listen(PORT)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Github-webhook配置"><a href="#Github-webhook配置" class="headerlink" title="Github webhook配置"></a>Github webhook配置</h3><p><img src="/2020/01/20/Hello-Hexo/webhook.png" alt="webhook"><br>因为脚本功能相对简单 只是做一下git pull的操作，所以没有用到github传过来的一些参数，也没有做一些校验，不是很严谨，需要的话可以在进行博冲</p>
+<h3 id="webhook的Nginx配置"><a href="#webhook的Nginx配置" class="headerlink" title="webhook的Nginx配置"></a>webhook的Nginx配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  deploy_blog.echoes.today;</span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_pass http:&#x2F;&#x2F;127.0.0.1:9988;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些搭建完成后就可以通过 <code>hexo d</code>命令将写好的文章上传到Github，并完成自动部署。</p>
+<h2 id="0x3-常用命令集合"><a href="#0x3-常用命令集合" class="headerlink" title="0x3 常用命令集合"></a>0x3 常用命令集合</h2><h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nginx -s reopen #重启Nginx</span><br><span class="line">nginx -s reload #重新加载Nginx配置文件，然后以优雅的方式重启Nginx</span><br><span class="line">nginx -s stop #强制停止Nginx服务</span><br><span class="line">nginx -s quit #优雅地停止Nginx服务（即处理完所有请求后再停止服务）</span><br></pre></td></tr></table></figure>
+
+<h3 id="Docker-常用命令"><a href="#Docker-常用命令" class="headerlink" title="Docker 常用命令"></a>Docker 常用命令</h3><p><a href="https://www.cnblogs.com/DeepInThought/p/10896790.html" target="_blank" rel="noopener">Docker 常用命令</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" rel="tag"># 博客搭建</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/09/%E4%BA%86%E8%A7%A3Mach-O%E6%96%87%E4%BB%B6/" rel="prev" title="了解Mach-O文件">
+      <i class="fa fa-chevron-left"></i> 了解Mach-O文件
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/26/App%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%8C%96/" rel="next" title="App启动过程以及优化">
+      App启动过程以及优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x0-搭建Nginx-以及-ShowDoc"><span class="nav-number">1.</span> <span class="nav-text">0x0 搭建Nginx 以及 ShowDoc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Nginx"><span class="nav-number">1.1.</span> <span class="nav-text">安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建ShowDoc"><span class="nav-number">1.2.</span> <span class="nav-text">搭建ShowDoc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-Hexo-以及自动化部署"><span class="nav-number">2.</span> <span class="nav-text">0x1 Hexo 以及自动化部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#webhook-脚本"><span class="nav-number">2.1.</span> <span class="nav-text">webhook 脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Github-webhook配置"><span class="nav-number">2.2.</span> <span class="nav-text">Github webhook配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#webhook的Nginx配置"><span class="nav-number">2.3.</span> <span class="nav-text">webhook的Nginx配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x3-常用命令集合"><span class="nav-number">3.</span> <span class="nav-text">0x3 常用命令集合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx"><span class="nav-number">3.1.</span> <span class="nav-text">Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-常用命令"><span class="nav-number">3.2.</span> <span class="nav-text">Docker 常用命令</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">晴れゆく空</p>
+  <div class="site-description" itemprop="description">晴れゆく空 记录今天的收获！😄</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">晴れゆく空</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.7.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

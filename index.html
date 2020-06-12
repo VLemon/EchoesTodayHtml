@@ -139,7 +139,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section">归档<span class="badge">7</span></a>
+    <a href="/archives/" rel="section">归档<span class="badge">8</span></a>
 
   </li>
         <li class="menu-item menu-item-wiki">
@@ -169,6 +169,84 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://echoes.today/2020/06/12/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20-%20%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴れゆく空">
+      <meta itemprop="description" content="晴れゆく空 记录今天的收获！😄">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晴れゆく空 Echoes Today">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/12/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20-%20%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">Swift学习笔记--函数</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-12 17:53:00 / 修改时间：17:55:22" itemprop="dateCreated datePublished" datetime="2020-06-12T17:53:00+08:00">2020-06-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Swift学习笔记–函数"><a href="#Swift学习笔记–函数" class="headerlink" title="Swift学习笔记–函数"></a>Swift学习笔记–函数</h1><h2 id="0x1-高阶函数"><a href="#0x1-高阶函数" class="headerlink" title="0x1 高阶函数"></a>0x1 高阶函数</h2><p>函数也是变量，函数可以被赋值给变量，也可以将它作为其他函数的参数或返回值。</p>
+<p>高阶函数在函数式编程中是很重要的东西。</p>
+<h2 id="0x2-inout参数"><a href="#0x2-inout参数" class="headerlink" title="0x2 inout参数"></a>0x2 inout参数</h2><p>一个inout参数持有一个传递给函数的值，函数可以改变这个值，然后从函数中穿出并替换掉原来的值。</p>
+<h3 id="lvalue-和-rvalue"><a href="#lvalue-和-rvalue" class="headerlink" title="lvalue 和 rvalue"></a>lvalue 和 rvalue</h3><p>lvalue 描述的是一个内存地址，它是“左值 (left value)” 的缩写，因为 lvalues 是可以存在于赋值语句左侧的表达式。举例来说，array[0] 是一个 lvalue，因为它描述了数组中第一个元素所在的内存位置。而 rvalue 描述的是一个值。2 + 2 是一个 rvalue，它描述的是 4 这个值。你不能把 2 + 2 或者 4 放到赋值语句的左侧。</p>
+<p><strong>对于 inout 参数，你只能传递左值，因为右值是不能被修改的</strong></p>
+<h3 id="inout参数使用方法"><a href="#inout参数使用方法" class="headerlink" title="inout参数使用方法"></a>inout参数使用方法</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">increment</span><span class="params">(value: <span class="keyword">inout</span> Int)</span></span> &#123;</span><br><span class="line">		value += <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> i = <span class="number">0</span> <span class="comment">//let以及没有个set方法的属性不能使用inout</span></span><br><span class="line">increment(&amp;i)  <span class="comment">//需要在参数前添加&amp;，但是并不是C里面的寻地址符的意思。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="嵌套函数和inout"><a href="#嵌套函数和inout" class="headerlink" title="嵌套函数和inout"></a>嵌套函数和inout</h3><p>我们可以在潜逃函数中使用inout参数，比如:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">incrementTenTimes</span><span class="params">(value: <span class="keyword">inout</span> Int)</span></span> &#123;</span><br><span class="line">	<span class="function"><span class="keyword">func</span> <span class="title">inc</span><span class="params">()</span></span> &#123;</span><br><span class="line">		value += <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">10</span> &#123;</span><br><span class="line">		inc()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> x = <span class="number">0</span></span><br><span class="line">incrementTenTimes(value: &amp;x)</span><br><span class="line">x <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+
+<p>但是我们不可以让该参数逃逸。可以这么理解，因为 inout 的值会在函数返回之前复制回去。那么要是我们可以在函数返回之后再去改变它，会发生什么呢？是说值应该在某个时间点再复制回去吗？要是调用源已经不存在了怎么办？编译器必须对此进行验证，因为这对保证安全十分关键。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/12/Swift%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20-%20%E5%87%BD%E6%95%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -825,7 +903,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
